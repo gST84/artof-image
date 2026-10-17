@@ -1,0 +1,60 @@
+name: Build Raspberry Pi image
+
+on:
+  workflow_dispatch:
+    inputs:
+      core_ref:
+        description: "artof-core branch, tag or commit"
+        default: main
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build:
+    name: Build ARTOF image (Raspberry Pi 4/5, arm64)
+    # Native ARM64 runner: artof-core compiles and the Docker images run without emulation
+    runs-on: ubuntu-24.04-arm
+    timeout-minutes: 240
+
+    permissions:
+      contents: write
+
+    steps:
+      - name: Check out artof-image
+        uses: actions/checkout@v4
+
+      - name: Check out artof-core
+        uses: actions/checkout@v4
+        with:
+          repository: artof-ilvo/artof-core
+          ref: ${{ inputs.core_ref || 'main' }}
+          path: src/artof-core
+
+      - name: Check out artof-system
+        uses: actions/checkout@v4
+        with:
+          repository: artof-ilvo/artof-system
+          path: src/artof-system
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build image
+        env:
+          ARTOF_CORE_SRC: src/artof-core
+          ARTOF_SYSTEM_SRC: src/artof-system
+        run: ./build.sh
+
+      - name: Upload image
+        uses: actions/upload-artifact@v4
+        with:
+          name: artof-image
+          path: deploy/*.img.xz
+          compression-level: 0
+
+      - name: Add image to release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: deploy/*.img.xz

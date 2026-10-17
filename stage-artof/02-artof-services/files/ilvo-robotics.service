@@ -1,0 +1,15 @@
+[Unit]
+Description=ilvo-robotics framework
+Wants=network-online.target docker.service
+After=network.target network-online.target docker.service artof-firstboot.service
+
+[Service]
+Environment="ILVO_PATH=/var/lib/ilvo"
+ExecStartPre=/bin/sleep 20
+ExecStart=/usr/bin/ilvo-system-manager
+Restart=on-failure
+StartLimitBurst=5
+StartLimitIntervalSec=30
+
+[Install]
+WantedBy=multi-user.target

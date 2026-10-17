@@ -1,0 +1,13 @@
+docker.io
+redis-tools
+iputils-ping
+curl
+wget
+zip
+cmake
+g++
+make
+libcurl4-openssl-dev
+libboost-filesystem-dev
+libboost-system-dev
+libboost-thread-dev

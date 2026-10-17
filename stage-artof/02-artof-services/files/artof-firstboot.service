@@ -1,0 +1,15 @@
+[Unit]
+Description=ARTOF first boot: load Docker images and start Redis
+Requires=docker.service
+After=docker.service
+Before=ilvo-robotics.service
+ConditionPathExists=/opt/artof/images
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/artof-firstboot
+RemainAfterExit=yes
+TimeoutStartSec=30min
+
+[Install]
+WantedBy=multi-user.target

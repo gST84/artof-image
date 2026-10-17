@@ -1,0 +1,13 @@
+# pi-gen configuration of the ARTOF image (see https://github.com/RPi-Distro/pi-gen#config)
+IMG_NAME=artof
+PI_GEN_RELEASE="ARTOF (ILVO)"
+RELEASE=trixie
+TARGET_HOSTNAME=artof
+LOCALE_DEFAULT=en_GB.UTF-8
+KEYBOARD_KEYMAP=be
+KEYBOARD_LAYOUT="Belgian"
+TIMEZONE_DEFAULT=Europe/Brussels
+WPA_COUNTRY=BE
+DEPLOY_COMPRESSION=xz
+# Raspberry Pi OS Lite (stage0-2) + ARTOF
+STAGE_LIST="stage0 stage1 stage2 stage-artof"
