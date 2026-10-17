@@ -3,9 +3,15 @@ name: Build Raspberry Pi image
 on:
   workflow_dispatch:
     inputs:
+      core_repo:
+        description: "artof-core repository"
+        default: gST84/artof-core
       core_ref:
         description: "artof-core branch, tag or commit"
         default: main
+      system_repo:
+        description: "artof-system repository (built when Docker Hub has no ARM64 image)"
+        default: gST84/artof-system
   push:
     tags:
       - "v*"
@@ -27,14 +33,14 @@ jobs:
       - name: Check out artof-core
         uses: actions/checkout@v4
         with:
-          repository: artof-ilvo/artof-core
+          repository: ${{ inputs.core_repo || 'gST84/artof-core' }}
           ref: ${{ inputs.core_ref || 'main' }}
           path: src/artof-core
 
       - name: Check out artof-system
         uses: actions/checkout@v4
         with:
-          repository: artof-ilvo/artof-system
+          repository: ${{ inputs.system_repo || 'gST84/artof-system' }}
           path: src/artof-system
 
       - name: Set up Docker Buildx

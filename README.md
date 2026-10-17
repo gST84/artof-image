@@ -31,7 +31,7 @@ docker ps
 
 ### GitHub Actions (recommended)
 
-Run the **Build Raspberry Pi image** workflow (*Actions → Run workflow*, optionally with an artof-core branch). It builds natively on an ARM64 runner and uploads the image as an artifact. Pushing a `v*` tag also attaches the image to a GitHub release.
+Run the **Build Raspberry Pi image** workflow (*Actions → Run workflow*). By default it uses the forks `gST84/artof-core` and `gST84/artof-system` (`main`); the repositories and the artof-core branch can be changed when starting the workflow. It builds natively on an ARM64 runner and uploads the image as an artifact. Pushing a `v*` tag also attaches the image to a GitHub release.
 
 ### Locally
 
