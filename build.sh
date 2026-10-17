@@ -46,7 +46,9 @@ rsync -a --exclude .git --exclude 'build/' --exclude .vscode \
 echo "Saving the Docker images ($PLATFORM)"
 mkdir -p "$IMAGES"
 for image in "${DOCKER_IMAGES[@]}"; do
-    if ! docker pull --platform "$PLATFORM" "$image"; then
+    # Docker may pull an image of another architecture without an error, so check it
+    if ! docker pull --platform "$PLATFORM" "$image" ||
+        [ "$(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")" != "$PLATFORM" ]; then
         if [ "$image" = "axelwillekens/artof-system:latest" ] && [ -d "$ARTOF_SYSTEM_SRC" ]; then
             echo "No $PLATFORM image of $image on Docker Hub, building it from $ARTOF_SYSTEM_SRC"
             docker buildx build --platform "$PLATFORM" -t "$image" --load "$ARTOF_SYSTEM_SRC"
@@ -55,6 +57,7 @@ for image in "${DOCKER_IMAGES[@]}"; do
             exit 1
         fi
     fi
+    echo "$image: $(docker image inspect --format '{{.Os}}/{{.Architecture}}' "$image")"
     file="$IMAGES/$(echo "$image" | tr '/:' '__').tar"
     # --platform is needed when the host is not ARM64 and Docker uses the containerd image store
     docker save --platform "$PLATFORM" -o "$file" "$image" 2>/dev/null || docker save -o "$file" "$image"
